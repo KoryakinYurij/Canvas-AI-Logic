@@ -35,9 +35,9 @@ tracking_system: file-system
 story_location: docs/sprint-artifacts
 
 development_status:
-  epic-1: in-progress
+  epic-1: done
   1-1-initialize-project-repository-and-build-system: done
-  1-2-implement-domain-layer-graph-model: backlog
+  1-2-implement-domain-layer-graph-model: done
   epic-1-retrospective: optional
 
   epic-2: backlog
