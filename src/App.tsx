@@ -1,9 +1,20 @@
+import { useGraphStore } from '@domain/graph/useGraphStore';
+import { PromptInput } from '@presentation/organisms/PromptInput';
+import { CanvasWidget } from '@widget/canvas/CanvasWidget';
+
 function App() {
+  const { nodes } = useGraphStore();
+  const hasNodes = Object.keys(nodes).length > 0;
+
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center">
-      <h1 className="text-3xl font-bold text-primary">
-        Canvas AI Logic - Foundation Setup
-      </h1>
+    <div className="min-h-screen bg-background font-sans text-slate-900">
+      {hasNodes ? (
+        <CanvasWidget />
+      ) : (
+        <div className="flex items-center justify-center min-h-screen">
+          <PromptInput />
+        </div>
+      )}
     </div>
   )
 }

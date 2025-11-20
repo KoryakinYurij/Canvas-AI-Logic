@@ -40,15 +40,15 @@ development_status:
   1-2-implement-domain-layer-graph-model: done
   epic-1-retrospective: optional
 
-  epic-2: backlog
-  2-1-implement-ai-connector-and-prompt-engineering: backlog
-  2-2-create-brain-dump-input-ui: backlog
+  epic-2: done
+  2-1-implement-ai-connector-and-prompt-engineering: done
+  2-2-create-brain-dump-input-ui: done
   epic-2-retrospective: optional
 
-  epic-3: backlog
-  3-1-implement-visualnodecard-component: backlog
-  3-2-implement-canvas-widget-with-auto-layout: backlog
-  3-3-render-connections: backlog
+  epic-3: done
+  3-1-implement-visualnodecard-component: done
+  3-2-implement-canvas-widget-with-auto-layout: done
+  3-3-render-connections: done
   epic-3-retrospective: optional
 
   epic-4: backlog
