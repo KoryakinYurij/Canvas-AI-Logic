@@ -1,5 +1,6 @@
 import { useGraphStore } from '@domain/graph/useGraphStore';
 import { PromptInput } from '@presentation/organisms/PromptInput';
+import { ChatSidebar } from '@presentation/organisms/ChatSidebar';
 import { CanvasWidget } from '@widget/canvas/CanvasWidget';
 
 function App() {
@@ -9,7 +10,10 @@ function App() {
   return (
     <div className="min-h-screen bg-background font-sans text-slate-900">
       {hasNodes ? (
-        <CanvasWidget />
+        <>
+          <CanvasWidget />
+          <ChatSidebar />
+        </>
       ) : (
         <div className="flex items-center justify-center min-h-screen">
           <PromptInput />
