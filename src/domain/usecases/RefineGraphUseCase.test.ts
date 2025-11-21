@@ -1,8 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { RefineGraphUseCase } from './RefineGraphUseCase';
 import { AIConnector } from '../ports/AIConnector';
-import { useGraphStore } from '../graph/useGraphStore';
-import { GraphModel } from '../graph/GraphModel';
 
 // Mock the store
 const mockSetGraph = vi.fn();
@@ -12,6 +10,7 @@ vi.mock('../graph/useGraphStore', () => ({
       nodes: { '1': { id: '1', type: 'topic', data: { title: 'Test', body: 'Body' }, position: {x:0,y:0}, dimensions: {width:100,height:100} } },
       edges: {},
       metadata: {},
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       setGraph: (graph: any) => mockSetGraph(graph),
     })),
   },

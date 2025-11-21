@@ -98,7 +98,37 @@ To bring the project to a "Greenfield 2025" standard, a 3-phase modernization is
 
 ---
 
+## 4. Accessibility & Testing (New Findings)
+**Added:** 2025-05-15
+
+### Accessibility (a11y)
+- **Issues:**
+    - `VisualNodeCard` uses `div` elements with `onClick` handlers without `role="button"` or `tabIndex`. This makes the application unusable for keyboard-only users.
+    - Canvas navigation (pan/zoom) is mouse-only.
+- **Recommendation:**
+    - Convert interactive `div`s to `<button>` or add ARIA roles.
+    - Implement keyboard shortcuts for canvas navigation (Arrow keys to pan, +/- to zoom).
+
+### Test Coverage
+- **Current State:** Testing is minimal.
+- **Issues:**
+    - Lack of End-to-End (E2E) tests.
+    - Unit tests for Domain layer exist, but Widget/Presentation layers are under-tested.
+- **Recommendation:**
+    - Introduce **Playwright** for E2E testing, specifically for the "Chat -> Graph Update" flow.
+    - Increase unit test coverage for `ElkAdapter` and `VisualNodeCard`.
+
+### Feature Code Rot (Export)
+- **Issue:** `ChatSidebar.tsx` attempts to export the graph using a class selector (`.react-transform-component`) from a library (`react-zoom-pan-pinch`) that is no longer used in `CanvasWidget.tsx`.
+- **Impact:** The "Export PNG" feature is currently broken.
+- **Remediation:**
+    - Refactor `CanvasWidget.tsx` to expose a stable ID for the content container.
+    - Update `ChatSidebar.tsx` to target that ID.
+
+---
+
 ## Summary Recommendation
 For the next agent/developer:
 1.  Start with **Phase 1 & 2** combined. This cleans up the terminal output and secures the build.
 2.  Perform **Phase 3** in a separate branch. Tailwind 4 significantly simplifies the setup (removes config files) but requires verifying that all styles (especially custom semantic colors used in `VisualNodeCard`) still apply correctly.
+3.  **Priority:** Fix the "Export PNG" bug immediately as it is a broken feature in the UI.

@@ -42,11 +42,7 @@ export const ChatSidebar = () => {
   };
 
   const handleExportPNG = async () => {
-    // Assuming the canvas wrapper has an ID or we select the main container.
-    // Since we don't have a specific ID in CanvasWidget, we'll try to find the container.
-    // For now, let's assume body or a known wrapper class.
-    // Ideally, CanvasWidget should expose an ID.
-    const node = document.querySelector('.react-transform-component') as HTMLElement; // react-zoom-pan-pinch default class
+    const node = document.getElementById('canvas-export-root');
     if (node) {
       try {
         const dataUrl = await toPng(node, { backgroundColor: '#ffffff' });
@@ -59,7 +55,7 @@ export const ChatSidebar = () => {
         alert('Failed to export PNG. See console for details.');
       }
     } else {
-        alert('Could not find canvas element to export.');
+      alert('Could not find canvas element to export.');
     }
   };
 

@@ -1,7 +1,6 @@
 import { AIConnector } from '../../domain/ports/AIConnector';
 import { GraphModel } from '../../domain/graph/GraphModel';
 import OpenAI from 'openai';
-import { v4 as uuidv4 } from 'uuid';
 
 export class GeminiConnector implements AIConnector {
   private client: OpenAI;

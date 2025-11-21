@@ -18,6 +18,7 @@ This document provides the complete epic and story breakdown for Canvas-AI-Logic
 2.  **Epic 2: AI Graph Generation**: Implements the core value proposition - generating graphs from text.
 3.  **Epic 3: Interactive Canvas**: Enables visualization and manipulation of the graph.
 4.  **Epic 4: Graph Refinement & Management**: Allows editing nodes and managing the graph state.
+5.  **Epic 5: Technical Debt & Modernization**: Addresses security, testing, accessibility, and legacy dependencies.
 
 ---
 
@@ -56,6 +57,7 @@ This document provides the complete epic and story breakdown for Canvas-AI-Logic
 *   Epic 2: AI Graph Generation (FR7, FR8, FR10, FR14)
 *   Epic 3: Interactive Canvas (FR1, FR2, FR3, FR4, FR5, FR6)
 *   Epic 4: Graph Refinement & Management (FR9, FR11, FR12, FR13, FR15, FR16, FR17)
+*   Epic 5: Technical Debt (NFRs: Security, Maintainability, Accessibility)
 
 ---
 
@@ -236,12 +238,71 @@ So that I can fix typos or change details manually.
 
 ---
 
-## Summary
+## Epic 5: Technical Debt & Modernization
 
-This breakdown provides a logical path from "Empty Repo" to "Functional MVP".
-1.  **Epic 1** builds the invisible foundation.
-2.  **Epic 2** proves the core "Magic" (Text -> Data).
-3.  **Epic 3** makes the data visible (Data -> Visual).
-4.  **Epic 4** makes the visual interactive (Visual -> Action).
+**Goal:** Bring the codebase up to modern standards (2025), fix broken features, and ensure long-term maintainability.
 
-Each story is sized for a single session and provides clear value.
+### Story 5.1: Fix PNG Export Functionality
+
+As a User,
+I want to download my graph as a PNG image,
+So that I can share it with others.
+
+**Acceptance Criteria:**
+
+**Given** a populated graph
+**When** I click the "Download PNG" button
+**Then** the browser downloads a `.png` file of the current view
+**And** the image is not blank
+**And** no error alert is shown
+
+**Prerequisites:** Epic 3
+**Technical Notes:** Fixes the `react-zoom-pan-pinch` class selector bug in `ChatSidebar`.
+
+### Story 5.2: Modernize Build System (Vite + ESLint)
+
+As a Developer,
+I want to use the latest build and linting tools,
+So that the project is secure and follows current best practices.
+
+**Acceptance Criteria:**
+
+**Given** the codebase
+**When** I run `npm install` and `npm run dev`
+**Then** I see no deprecation warnings from `vite` or `eslint`
+**And** the configuration files use the new formats (`eslint.config.js`)
+
+**Prerequisites:** None
+**Technical Notes:** Upgrade Vite to v6, ESLint to v9.
+
+### Story 5.3: Accessibility Improvements
+
+As a User with disabilities,
+I want to navigate the nodes using my keyboard,
+So that I can use the application without a mouse.
+
+**Acceptance Criteria:**
+
+**Given** the canvas
+**When** I press Tab
+**Then** focus moves between nodes
+**And** I can press Enter to edit a node
+
+**Prerequisites:** 3.1
+**Technical Notes:** Add `role="button"` and `tabIndex` to VisualNodeCard.
+
+### Story 5.4: Add End-to-End Testing
+
+As a Developer,
+I want to run automated E2E tests,
+So that I can verify critical user flows before releasing.
+
+**Acceptance Criteria:**
+
+**Given** the CI pipeline
+**When** code is pushed
+**Then** Playwright tests run for "Generate Graph" and "Export PNG"
+**And** tests pass
+
+**Prerequisites:** None
+**Technical Notes:** Install Playwright.
