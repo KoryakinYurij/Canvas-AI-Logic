@@ -1,12 +1,7 @@
 import React, { useState } from 'react';
 import { Button } from '../atoms/Button';
 import { TextArea } from '../atoms/Input';
-import { GenerateGraphUseCase } from '@domain/usecases/GenerateGraph';
-import { MockAIConnector } from '@infrastructure/ai/MockAIConnector';
-
-// In a real app, we'd inject this via a DI container
-const aiConnector = new MockAIConnector();
-const generateGraphUseCase = new GenerateGraphUseCase(aiConnector);
+import { generateGraphUseCase } from '../../di';
 
 export const PromptInput: React.FC = () => {
   const [prompt, setPrompt] = useState('');
