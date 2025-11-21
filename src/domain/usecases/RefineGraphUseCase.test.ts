@@ -59,6 +59,11 @@ describe('RefineGraphUseCase', () => {
     const error = new Error('AI Error');
     mockAIConnector.refineGraph = vi.fn().mockRejectedValue(error);
 
+    // Suppress console.error for this specific test to avoid noise in output
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
     await expect(useCase.execute('command')).rejects.toThrow(error);
+
+    consoleSpy.mockRestore();
   });
 });

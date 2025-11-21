@@ -28,7 +28,7 @@
 # - SM typically drafts next story ONLY after previous one is 'done' to incorporate learnings
 # - Dev moves story to 'review', dev reviews, then Dev moves to 'done'
 
-generated: "2025-05-15T13:35:00Z"
+generated: "2025-05-15T14:50:00Z"
 project: Canvas-AI-Logic
 project_key: CAL
 tracking_system: file-system
@@ -43,6 +43,7 @@ development_status:
   epic-2: done
   2-1-implement-ai-connector-and-prompt-engineering: done
   2-2-create-brain-dump-input-ui: done
+  2-3-real-ai-connector: done
   epic-2-retrospective: optional
 
   epic-3: done
@@ -53,5 +54,7 @@ development_status:
 
   epic-4: contexted
   4-1-implement-chat-interface-for-refinement: done
-  4-2-manual-node-editing: backlog
+  4-2-manual-node-editing: done
+  4-3-local-storage-persistence: done
+  4-4-export-graph: done
   epic-4-retrospective: optional

@@ -2,6 +2,9 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Send, Bot, User, X, MessageSquare } from 'lucide-react';
 import { clsx } from 'clsx';
 import { refineGraphUseCase } from '../../di';
+import { useGraphStore } from '@domain/graph/useGraphStore';
+import { Trash2, Download } from 'lucide-react';
+import { toPng } from 'html-to-image';
 
 interface Message {
   id: string;
@@ -17,6 +20,48 @@ export const ChatSidebar = () => {
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const { clearGraph } = useGraphStore();
+
+  const handleClear = () => {
+    if (confirm('Are you sure you want to clear the canvas? This cannot be undone.')) {
+      clearGraph();
+      setMessages([{ id: Date.now().toString(), role: 'assistant', content: 'Canvas cleared. What would you like to create next?' }]);
+      setIsOpen(false);
+    }
+  };
+
+  const handleExportJSON = () => {
+    const state = useGraphStore.getState();
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify({ nodes: state.nodes, edges: state.edges }, null, 2));
+    const downloadAnchorNode = document.createElement('a');
+    downloadAnchorNode.setAttribute("href", dataStr);
+    downloadAnchorNode.setAttribute("download", "canvas-ai-graph.json");
+    document.body.appendChild(downloadAnchorNode);
+    downloadAnchorNode.click();
+    downloadAnchorNode.remove();
+  };
+
+  const handleExportPNG = async () => {
+    // Assuming the canvas wrapper has an ID or we select the main container.
+    // Since we don't have a specific ID in CanvasWidget, we'll try to find the container.
+    // For now, let's assume body or a known wrapper class.
+    // Ideally, CanvasWidget should expose an ID.
+    const node = document.querySelector('.react-transform-component') as HTMLElement; // react-zoom-pan-pinch default class
+    if (node) {
+      try {
+        const dataUrl = await toPng(node, { backgroundColor: '#ffffff' });
+        const link = document.createElement('a');
+        link.download = 'canvas-ai-graph.png';
+        link.href = dataUrl;
+        link.click();
+      } catch (err) {
+        console.error('Failed to export PNG', err);
+        alert('Failed to export PNG. See console for details.');
+      }
+    } else {
+        alert('Could not find canvas element to export.');
+    }
+  };
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -88,12 +133,35 @@ export const ChatSidebar = () => {
           <Bot size={20} className="text-blue-600" />
           AI Assistant
         </h2>
-        <button
-          onClick={() => setIsOpen(false)}
-          className="p-1 hover:bg-slate-200 rounded text-slate-500 transition-colors"
-        >
-          <X size={20} />
-        </button>
+        <div className="flex gap-1">
+          <button
+            onClick={handleExportJSON}
+            className="p-1 hover:bg-slate-200 rounded text-slate-500 transition-colors"
+            title="Export JSON"
+          >
+            <span className="text-xs font-bold">JSON</span>
+          </button>
+          <button
+            onClick={handleExportPNG}
+            className="p-1 hover:bg-slate-200 rounded text-slate-500 transition-colors"
+            title="Export PNG"
+          >
+            <Download size={20} />
+          </button>
+          <button
+            onClick={handleClear}
+            className="p-1 hover:bg-red-100 hover:text-red-600 rounded text-slate-500 transition-colors"
+            title="Clear Canvas"
+          >
+            <Trash2 size={20} />
+          </button>
+          <button
+            onClick={() => setIsOpen(false)}
+            className="p-1 hover:bg-slate-200 rounded text-slate-500 transition-colors"
+          >
+            <X size={20} />
+          </button>
+        </div>
       </div>
 
       {/* Messages */}
