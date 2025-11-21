@@ -62,6 +62,6 @@ development_status:
   epic-5: contexted
   5-1-fix-png-export-functionality: done
   5-2-modernize-build-system: done
-  5-3-accessibility-improvements: ready-for-dev
-  5-4-add-end-to-end-testing: backlog
+  5-3-accessibility-improvements: done
+  5-4-add-end-to-end-testing: ready-for-dev
   epic-5-retrospective: optional
