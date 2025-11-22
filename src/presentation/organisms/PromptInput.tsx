@@ -2,10 +2,12 @@ import React, { useState } from 'react';
 import { Button } from '../atoms/Button';
 import { TextArea } from '../atoms/Input';
 import { generateGraphUseCase } from '../../di';
+import { useToastStore } from '@presentation/stores/useToastStore';
 
 export const PromptInput: React.FC = () => {
   const [prompt, setPrompt] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const { addToast } = useToastStore();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -16,7 +18,7 @@ export const PromptInput: React.FC = () => {
       await generateGraphUseCase.execute(prompt);
     } catch (error) {
       console.error(error);
-      // TODO: Toast error
+      addToast(error instanceof Error ? error.message : 'Failed to generate graph', 'error');
     } finally {
       setIsLoading(false);
     }

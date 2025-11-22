@@ -6,24 +6,9 @@ This document outlines known issues reported by users and recommended solutions 
 
 ---
 
-## 1. PNG Export Fails
-**Symptom:**
-When clicking the "Export PNG" button in the Chat Sidebar, an alert appears:
-> "Could not find canvas element to export."
-
-**Cause:**
-The export logic in `ChatSidebar.tsx` attempts to find the canvas using a class selector specific to the `react-zoom-pan-pinch` library:
-```typescript
-const node = document.querySelector('.react-transform-component') as HTMLElement;
-```
-However, `CanvasWidget.tsx` currently uses a custom implementation for pan/zoom and does **not** use this library. Therefore, the selector fails.
-
-**Workaround / Fix:**
-1.  Modify `src/widget/canvas/CanvasWidget.tsx` to wrap the transformable content in a `div` with a stable ID (e.g., `id="canvas-export-target"`).
-2.  Update `src/presentation/organisms/ChatSidebar.tsx` to select by this ID:
-    ```typescript
-    const node = document.getElementById('canvas-export-target');
-    ```
+## 1. PNG Export Fails (FIXED)
+**Status:** Resolved in Epic 5.1.
+The export logic was updated to target the stable ID `canvas-export-root` provided by the `CanvasWidget`.
 
 ---
 

@@ -69,32 +69,12 @@ To bring the project to a "Greenfield 2025" standard, a 3-phase modernization is
 ---
 
 ## 3. Framework & Styling (React 19 + Tailwind 4)
-**Current:** `react@18.2.0`, `tailwindcss@3.4.3`
-**Target:** `react@^19.0.0`, `tailwindcss@^4.0.0`
+**Status: COMPLETED (2025-05-21)**
 
-### Issues
-- **React 19:** Introduces new compiler and hooks. While `zustand` v5 (already installed) is compatible, other libs might need checking.
-- **Tailwind 4:** Major breaking change in configuration. It moves away from `tailwind.config.js` to a CSS-first configuration.
-
-### Migration Steps (Tailwind 4)
-1.  Install: `npm install tailwindcss@next @tailwindcss/vite@next`
-2.  **Delete** `tailwind.config.js` and `postcss.config.js`.
-3.  Update `vite.config.ts`:
-    ```typescript
-    import tailwindcss from '@tailwindcss/vite';
-    export default defineConfig({
-      plugins: [react(), tailwindcss()],
-      // ...
-    })
-    ```
-4.  Update `src/index.css`: Replace `@tailwind` directives with `@import "tailwindcss";`.
-
-### Migration Steps (React 19)
-1.  Run: `npm install react@latest react-dom@latest @types/react@latest @types/react-dom@latest`
-2.  **Code Changes:**
-    - Remove `forwardRef` (it's now just a prop).
-    - Remove `Context.Provider` (use `<Context>`).
-    - Check `html-to-image` compatibility.
+### Improvements Implemented
+- **React 19:** Upgraded to latest version. Removed legacy `forwardRef` usage. Verified `zustand` compatibility.
+- **Tailwind 4:** Migrated to Tailwind CSS v4. Removed `tailwind.config.js` and `postcss.config.js`. Updated `vite.config.ts` and `src/index.css`.
+- **UX:** Implemented Toast notification system (`useToastStore`) to replace console logs and alerts.
 
 ---
 
@@ -119,11 +99,8 @@ To bring the project to a "Greenfield 2025" standard, a 3-phase modernization is
     - Increase unit test coverage for `ElkAdapter` and `VisualNodeCard`.
 
 ### Feature Code Rot (Export)
-- **Issue:** `ChatSidebar.tsx` attempts to export the graph using a class selector (`.react-transform-component`) from a library (`react-zoom-pan-pinch`) that is no longer used in `CanvasWidget.tsx`.
-- **Impact:** The "Export PNG" feature is currently broken.
-- **Remediation:**
-    - Refactor `CanvasWidget.tsx` to expose a stable ID for the content container.
-    - Update `ChatSidebar.tsx` to target that ID.
+**Status: FIXED**
+- The "Export PNG" functionality has been restored by exposing a stable ID `canvas-export-root` in `CanvasWidget` and targeting it in `ChatSidebar`.
 
 ---
 

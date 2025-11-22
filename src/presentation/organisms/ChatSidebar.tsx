@@ -5,6 +5,7 @@ import { refineGraphUseCase } from '../../di';
 import { useGraphStore } from '@domain/graph/useGraphStore';
 import { Trash2, Download } from 'lucide-react';
 import { toPng } from 'html-to-image';
+import { useToastStore } from '@presentation/stores/useToastStore';
 
 interface Message {
   id: string;
@@ -21,6 +22,7 @@ export const ChatSidebar = () => {
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { clearGraph } = useGraphStore();
+  const { addToast } = useToastStore();
 
   const handleClear = () => {
     if (confirm('Are you sure you want to clear the canvas? This cannot be undone.')) {
@@ -50,12 +52,13 @@ export const ChatSidebar = () => {
         link.download = 'canvas-ai-graph.png';
         link.href = dataUrl;
         link.click();
+        addToast('Graph exported successfully!', 'success');
       } catch (err) {
         console.error('Failed to export PNG', err);
-        alert('Failed to export PNG. See console for details.');
+        addToast('Failed to export PNG. See console for details.', 'error');
       }
     } else {
-      alert('Could not find canvas element to export.');
+      addToast('Could not find canvas element to export.', 'error');
     }
   };
 
