@@ -58,3 +58,10 @@ development_status:
   4-3-local-storage-persistence: done
   4-4-export-graph: done
   epic-4-retrospective: optional
+
+  epic-5: contexted
+  5-1-fix-png-export-functionality: done
+  5-2-modernize-build-system: done
+  5-3-accessibility-improvements: done
+  5-4-add-end-to-end-testing: done
+  epic-5-retrospective: completed

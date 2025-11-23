@@ -14,9 +14,12 @@ export const CanvasWidget: React.FC = () => {
   const canvasRef = useRef<HTMLDivElement>(null);
 
   // Trigger auto-layout when graph structure changes (simple heuristic)
+  const nodeCount = Object.keys(nodes).length;
+  const edgeCount = Object.keys(edges).length;
+
   useEffect(() => {
     autoLayout.execute();
-  }, [Object.keys(nodes).length, Object.keys(edges).length]);
+  }, [nodeCount, edgeCount]);
 
   // Simple Pan/Zoom state (placeholder for full implementation)
   const [transform, setTransform] = useState({ x: 0, y: 0, scale: 1 });
@@ -60,6 +63,7 @@ export const CanvasWidget: React.FC = () => {
       onWheel={handleWheel}
     >
       <div
+        id="canvas-export-root"
         className="absolute origin-top-left transition-transform duration-75 ease-linear"
         style={{
           transform: `translate(${transform.x}px, ${transform.y}px) scale(${transform.scale})`

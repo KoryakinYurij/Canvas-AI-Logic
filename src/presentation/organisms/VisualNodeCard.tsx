@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { NodeEntity } from '@domain/entities/NodeEntity';
 import { clsx } from 'clsx';
 import { useGraphStore } from '@domain/graph/useGraphStore';
@@ -12,13 +12,19 @@ interface VisualNodeCardProps {
 export const VisualNodeCard: React.FC<VisualNodeCardProps> = ({ node, selected, onSelect }) => {
   const { updateNode } = useGraphStore();
   const [isEditing, setIsEditing] = useState(false);
+
+  // Directly derive initial state from props is okay, but if props change, we want to update state IF not editing.
+  // The React pattern here is:
+  // 1. If we are just viewing, the card should render `node.data.title`.
+  // 2. If we are editing, it should render `editTitle`.
+  // So we don't necessarily need to sync state constantly.
+
   const [editTitle, setEditTitle] = useState(node.data.title);
   const [editBody, setEditBody] = useState(node.data.body);
 
-  useEffect(() => {
-    setEditTitle(node.data.title);
-    setEditBody(node.data.body);
-  }, [node.data]);
+  // Instead of useEffect syncing, we can update state when entering edit mode,
+  // or use a key on the component to reset it when node changes (not ideal here).
+  // Better: Only use state for the inputs. The view mode reads from props.
 
   const semanticColors = {
     topic: 'border-blue-500 bg-white',
@@ -28,6 +34,9 @@ export const VisualNodeCard: React.FC<VisualNodeCardProps> = ({ node, selected, 
 
   const handleDoubleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
+    // Initialize edit state with current props
+    setEditTitle(node.data.title);
+    setEditBody(node.data.body);
     setIsEditing(true);
   };
 
@@ -39,8 +48,6 @@ export const VisualNodeCard: React.FC<VisualNodeCardProps> = ({ node, selected, 
   };
 
   const handleCancel = () => {
-    setEditTitle(node.data.title);
-    setEditBody(node.data.body);
     setIsEditing(false);
   };
 
@@ -54,11 +61,31 @@ export const VisualNodeCard: React.FC<VisualNodeCardProps> = ({ node, selected, 
     }
   };
 
+  const handleCardKeyDown = (e: React.KeyboardEvent) => {
+    if (isEditing) return;
+
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      if (selected) {
+        // Enter edit mode
+        setEditTitle(node.data.title);
+        setEditBody(node.data.body);
+        setIsEditing(true);
+      } else {
+        // Select
+        onSelect?.(node.id);
+      }
+    }
+  };
+
   return (
     <div
+      role="button"
+      tabIndex={0}
+      aria-label={`Node: ${node.data.title}`}
       className={clsx(
-        'absolute flex flex-col rounded-lg shadow-sm border-l-4 transition-all cursor-pointer',
-        !isEditing && 'hover:shadow-md hover:scale-[1.02]',
+        'absolute flex flex-col rounded-lg shadow-sm border-l-4 transition-all cursor-pointer outline-none',
+        !isEditing && 'hover:shadow-md hover:scale-[1.02] focus:ring-2 focus:ring-blue-400 focus:ring-offset-2',
         semanticColors[node.type] || 'border-slate-300 bg-white',
         selected && !isEditing && 'ring-2 ring-offset-2 ring-blue-500',
         isEditing && 'ring-2 ring-blue-400 shadow-xl z-50 scale-105'
@@ -71,6 +98,7 @@ export const VisualNodeCard: React.FC<VisualNodeCardProps> = ({ node, selected, 
       }}
       onClick={() => !isEditing && onSelect?.(node.id)}
       onDoubleClick={handleDoubleClick}
+      onKeyDown={handleCardKeyDown}
     >
       {isEditing ? (
         <div className="flex flex-col h-full bg-white rounded-r-lg">

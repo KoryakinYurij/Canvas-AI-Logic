@@ -43,11 +43,12 @@ export const useGraphStore = create<GraphState>()(
 
       removeNode: (id) =>
         set((state) => {
-          const { [id]: removed, ...rest } = state.nodes;
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          const { [id]: _, ...rest } = state.nodes;
           // Also remove connected edges
           const remainingEdges = Object.fromEntries(
             Object.entries(state.edges).filter(
-              ([_, edge]) => edge.sourceId !== id && edge.targetId !== id
+              ([_id, edge]) => edge.sourceId !== id && edge.targetId !== id
             )
           );
           return { nodes: rest, edges: remainingEdges };
@@ -60,7 +61,8 @@ export const useGraphStore = create<GraphState>()(
 
       removeEdge: (id) =>
         set((state) => {
-          const { [id]: removed, ...rest } = state.edges;
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          const { [id]: _, ...rest } = state.edges;
           return { edges: rest };
         }),
 

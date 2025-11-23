@@ -69,32 +69,38 @@ To bring the project to a "Greenfield 2025" standard, a 3-phase modernization is
 ---
 
 ## 3. Framework & Styling (React 19 + Tailwind 4)
-**Current:** `react@18.2.0`, `tailwindcss@3.4.3`
-**Target:** `react@^19.0.0`, `tailwindcss@^4.0.0`
+**Status: COMPLETED (2025-05-21)**
 
-### Issues
-- **React 19:** Introduces new compiler and hooks. While `zustand` v5 (already installed) is compatible, other libs might need checking.
-- **Tailwind 4:** Major breaking change in configuration. It moves away from `tailwind.config.js` to a CSS-first configuration.
+### Improvements Implemented
+- **React 19:** Upgraded to latest version. Removed legacy `forwardRef` usage. Verified `zustand` compatibility.
+- **Tailwind 4:** Migrated to Tailwind CSS v4. Removed `tailwind.config.js` and `postcss.config.js`. Updated `vite.config.ts` and `src/index.css`.
+- **UX:** Implemented Toast notification system (`useToastStore`) to replace console logs and alerts.
 
-### Migration Steps (Tailwind 4)
-1.  Install: `npm install tailwindcss@next @tailwindcss/vite@next`
-2.  **Delete** `tailwind.config.js` and `postcss.config.js`.
-3.  Update `vite.config.ts`:
-    ```typescript
-    import tailwindcss from '@tailwindcss/vite';
-    export default defineConfig({
-      plugins: [react(), tailwindcss()],
-      // ...
-    })
-    ```
-4.  Update `src/index.css`: Replace `@tailwind` directives with `@import "tailwindcss";`.
+---
 
-### Migration Steps (React 19)
-1.  Run: `npm install react@latest react-dom@latest @types/react@latest @types/react-dom@latest`
-2.  **Code Changes:**
-    - Remove `forwardRef` (it's now just a prop).
-    - Remove `Context.Provider` (use `<Context>`).
-    - Check `html-to-image` compatibility.
+## 4. Accessibility & Testing (New Findings)
+**Added:** 2025-05-15
+
+### Accessibility (a11y)
+- **Issues:**
+    - `VisualNodeCard` uses `div` elements with `onClick` handlers without `role="button"` or `tabIndex`. This makes the application unusable for keyboard-only users.
+    - Canvas navigation (pan/zoom) is mouse-only.
+- **Recommendation:**
+    - Convert interactive `div`s to `<button>` or add ARIA roles.
+    - Implement keyboard shortcuts for canvas navigation (Arrow keys to pan, +/- to zoom).
+
+### Test Coverage
+- **Current State:** Testing is minimal.
+- **Issues:**
+    - Lack of End-to-End (E2E) tests.
+    - Unit tests for Domain layer exist, but Widget/Presentation layers are under-tested.
+- **Recommendation:**
+    - Introduce **Playwright** for E2E testing, specifically for the "Chat -> Graph Update" flow.
+    - Increase unit test coverage for `ElkAdapter` and `VisualNodeCard`.
+
+### Feature Code Rot (Export)
+**Status: FIXED**
+- The "Export PNG" functionality has been restored by exposing a stable ID `canvas-export-root` in `CanvasWidget` and targeting it in `ChatSidebar`.
 
 ---
 
@@ -102,3 +108,4 @@ To bring the project to a "Greenfield 2025" standard, a 3-phase modernization is
 For the next agent/developer:
 1.  Start with **Phase 1 & 2** combined. This cleans up the terminal output and secures the build.
 2.  Perform **Phase 3** in a separate branch. Tailwind 4 significantly simplifies the setup (removes config files) but requires verifying that all styles (especially custom semantic colors used in `VisualNodeCard`) still apply correctly.
+3.  **Priority:** Fix the "Export PNG" bug immediately as it is a broken feature in the UI.
