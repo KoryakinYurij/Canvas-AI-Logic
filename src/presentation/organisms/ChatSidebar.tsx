@@ -84,12 +84,21 @@ export const ChatSidebar = () => {
     setIsLoading(true);
 
     try {
-      await refineGraphUseCase.execute(userMessage.content);
+      // Execute the use case which now returns a structured response
+      const response = await refineGraphUseCase.execute(userMessage.content);
+
+      let content = '';
+      if (response.type === 'text') {
+        content = response.content;
+      } else if (response.type === 'graph') {
+        content = response.message;
+        // The graph store update is already handled inside the use case
+      }
 
       const aiMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: 'I have updated the graph based on your request.'
+        content: content
       };
       setMessages(prev => [...prev, aiMessage]);
     } catch (error) {
