@@ -1,4 +1,4 @@
-import { AIConnector } from '../../domain/ports/AIConnector';
+import { AIConnector, AIResponse } from '../../domain/ports/AIConnector';
 import { GraphModel } from '../../domain/graph/GraphModel';
 import OpenAI from 'openai';
 
@@ -81,9 +81,25 @@ export class GeminiConnector implements AIConnector {
     }
   }
 
-  async refineGraph(currentGraph: GraphModel, command: string): Promise<GraphModel> {
-    console.log('Gemini refining graph with:', command);
+  async refineGraph(currentGraph: GraphModel, command: string): Promise<AIResponse> {
+    console.log('Gemini processing command:', command);
 
+    // 1. Intent Classification
+    const classification = await this.classifyIntent(command);
+    console.log('Intent classified as:', classification);
+
+    if (classification === 'CHAT') {
+       const chatResponse = await this.client.chat.completions.create({
+        model: 'gemini-2.0-flash',
+        messages: [
+          { role: 'system', content: 'You are a helpful assistant for a Knowledge Graph tool. Answer the user query directly and concisely. Do not try to generate JSON.' },
+          { role: 'user', content: command }
+        ],
+      });
+      return { type: 'text', content: chatResponse.choices[0].message.content || '...' };
+    }
+
+    // 2. Graph Refinement (for REFINE or CREATE)
     const refinePrompt = `
       You are modifying an existing graph.
 
@@ -115,14 +131,48 @@ export class GeminiConnector implements AIConnector {
       const cleanContent = content.replace(/```json/g, '').replace(/```/g, '').trim();
       const graph = JSON.parse(cleanContent);
 
+      const message = classification === 'CREATE'
+        ? 'I have created a new graph for you.'
+        : 'I have updated the graph based on your request.';
+
       return {
-        ...graph,
-        metadata: currentGraph.metadata
-      } as GraphModel;
+        type: 'graph',
+        content: { ...graph, metadata: currentGraph.metadata } as GraphModel,
+        message
+      };
 
     } catch (error) {
       console.error('Gemini Refine Error:', error);
       throw error;
+    }
+  }
+
+  private async classifyIntent(command: string): Promise<'CHAT' | 'REFINE' | 'CREATE'> {
+    try {
+      const completion = await this.client.chat.completions.create({
+        model: 'gemini-2.0-flash',
+        messages: [
+          {
+            role: 'system',
+            content: `Classify the user's intent based on their message.
+            Categories:
+            - CHAT: Greetings, questions about the AI, small talk, questions not related to changing the graph structure (e.g. "hi", "how are you", "what is this?").
+            - REFINE: Requests to add, remove, change, or modify nodes/edges in the CURRENT graph (e.g. "add a node", "delete this", "connect A to B").
+            - CREATE: Requests to create a brand NEW graph from scratch, disregarding the current one (e.g. "create a graph about dogs", "make a mindmap for marketing").
+
+            Return ONLY one word: CHAT, REFINE, or CREATE.`
+          },
+          { role: 'user', content: command }
+        ],
+      });
+
+      const intent = completion.choices[0].message.content?.trim().toUpperCase();
+      if (intent === 'CREATE') return 'CREATE';
+      if (intent === 'REFINE') return 'REFINE';
+      return 'CHAT';
+    } catch (e) {
+      console.warn('Intent classification failed, defaulting to REFINE', e);
+      return 'REFINE';
     }
   }
 }

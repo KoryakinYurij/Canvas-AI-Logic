@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { RefineGraphUseCase } from './RefineGraphUseCase';
-import { AIConnector } from '../ports/AIConnector';
+import { AIConnector, AIResponse } from '../ports/AIConnector';
 
 // Mock the store
 const mockSetGraph = vi.fn();
@@ -25,10 +25,14 @@ describe('RefineGraphUseCase', () => {
     mockAIConnector = {
       generateGraph: vi.fn(),
       refineGraph: vi.fn().mockResolvedValue({
-        nodes: { '2': { id: '2', type: 'topic', data: { title: 'New', body: 'New' }, position: {x:0,y:0}, dimensions: {width:100,height:100} } },
-        edges: {},
-        metadata: {},
-      }),
+        type: 'graph',
+        content: {
+          nodes: { '2': { id: '2', type: 'topic', data: { title: 'New', body: 'New' }, position: {x:0,y:0}, dimensions: {width:100,height:100} } },
+          edges: {},
+          metadata: {},
+        },
+        message: 'Updated'
+      } as AIResponse),
     };
     useCase = new RefineGraphUseCase(mockAIConnector);
   });
@@ -45,13 +49,24 @@ describe('RefineGraphUseCase', () => {
     );
   });
 
-  it('should update the store with the new graph', async () => {
+  it('should update the store with the new graph if response type is graph', async () => {
     await useCase.execute('command');
     expect(mockSetGraph).toHaveBeenCalledWith(
       expect.objectContaining({
         nodes: expect.objectContaining({ '2': expect.any(Object) }),
       })
     );
+  });
+
+  it('should NOT update the store if response type is text', async () => {
+     mockAIConnector.refineGraph = vi.fn().mockResolvedValue({
+        type: 'text',
+        content: 'Just chatting'
+      } as AIResponse);
+
+    const result = await useCase.execute('hello');
+    expect(result.type).toBe('text');
+    expect(mockSetGraph).not.toHaveBeenCalled();
   });
 
   it('should throw error if connector fails', async () => {

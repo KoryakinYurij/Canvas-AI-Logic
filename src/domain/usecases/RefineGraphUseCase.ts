@@ -1,10 +1,10 @@
-import { AIConnector } from '../ports/AIConnector';
+import { AIConnector, AIResponse } from '../ports/AIConnector';
 import { useGraphStore } from '../graph/useGraphStore';
 
 export class RefineGraphUseCase {
   constructor(private aiConnector: AIConnector) {}
 
-  async execute(command: string): Promise<void> {
+  async execute(command: string): Promise<AIResponse> {
     try {
       const currentGraph = useGraphStore.getState();
       const graphModel = {
@@ -13,10 +13,13 @@ export class RefineGraphUseCase {
         metadata: currentGraph.metadata
       };
 
-      const updatedGraph = await this.aiConnector.refineGraph(graphModel, command);
+      const response = await this.aiConnector.refineGraph(graphModel, command);
 
-      // Update the store with the new graph
-      useGraphStore.getState().setGraph(updatedGraph);
+      if (response.type === 'graph') {
+        useGraphStore.getState().setGraph(response.content);
+      }
+
+      return response;
     } catch (error) {
       console.error('Failed to refine graph:', error);
       throw error;
