@@ -49,6 +49,12 @@ When triggered, adopt the persona fully.
 -   `*status`: Check `docs/sprint-artifacts/sprint-status.yaml` (if available) or `docs/bmm-workflow-status.yaml`.
 
 ## 7. Critical Rules
-1.  **Language Priority:** All output artifacts (PRD, Docs) must be in **Russian** unless told otherwise (or as configured in `config.yaml`).
+
 2.  **Dynamic Depth:** If the project is "Solo", do not ask for a 20-page PRD. A bullet-point list is sufficient.
 3.  **Source of Truth:** The file structure `.bmad/bmm/workflows/` is the ultimate guide for what processes are available. If an instruction mentions a "Blueprint" that doesn't exist, look for the equivalent in `workflows/`.
+4. If at any point an agent:
+- is unsure about requirements
+- detects a possible invariant violation
+- cannot verify correctness or safety
+
+The agent MUST stop and request clarification.
