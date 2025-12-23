@@ -3,9 +3,7 @@ import { Send, Bot, User, X, MessageSquare } from 'lucide-react';
 import { clsx } from 'clsx';
 import { refineGraphUseCase } from '../../di';
 import { useGraphStore } from '@domain/graph/useGraphStore';
-import { Trash2, Download } from 'lucide-react';
-import { toPng } from 'html-to-image';
-import { useToastStore } from '@presentation/stores/useToastStore';
+import { Trash2 } from 'lucide-react';
 
 interface Message {
   id: string;
@@ -22,7 +20,6 @@ export const ChatSidebar = () => {
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { clearGraph } = useGraphStore();
-  const { addToast } = useToastStore();
 
   const handleClear = () => {
     if (confirm('Are you sure you want to clear the canvas? This cannot be undone.')) {
@@ -32,35 +29,6 @@ export const ChatSidebar = () => {
     }
   };
 
-  const handleExportJSON = () => {
-    const state = useGraphStore.getState();
-    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify({ nodes: state.nodes, edges: state.edges }, null, 2));
-    const downloadAnchorNode = document.createElement('a');
-    downloadAnchorNode.setAttribute("href", dataStr);
-    downloadAnchorNode.setAttribute("download", "canvas-ai-graph.json");
-    document.body.appendChild(downloadAnchorNode);
-    downloadAnchorNode.click();
-    downloadAnchorNode.remove();
-  };
-
-  const handleExportPNG = async () => {
-    const node = document.getElementById('canvas-export-root');
-    if (node) {
-      try {
-        const dataUrl = await toPng(node, { backgroundColor: '#ffffff' });
-        const link = document.createElement('a');
-        link.download = 'canvas-ai-graph.png';
-        link.href = dataUrl;
-        link.click();
-        addToast('Graph exported successfully!', 'success');
-      } catch (err) {
-        console.error('Failed to export PNG', err);
-        addToast('Failed to export PNG. See console for details.', 'error');
-      }
-    } else {
-      addToast('Could not find canvas element to export.', 'error');
-    }
-  };
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -90,9 +58,8 @@ export const ChatSidebar = () => {
       let content = '';
       if (response.type === 'text') {
         content = response.content;
-      } else if (response.type === 'graph') {
-        content = response.message;
-        // The graph store update is already handled inside the use case
+      } else if (response.type === 'proposal') {
+        content = response.message + ` (${response.content.length} actions proposed)`;
       }
 
       const aiMessage: Message = {
@@ -142,20 +109,6 @@ export const ChatSidebar = () => {
           AI Assistant
         </h2>
         <div className="flex gap-1">
-          <button
-            onClick={handleExportJSON}
-            className="p-1 hover:bg-slate-200 rounded text-slate-500 transition-colors"
-            title="Export JSON"
-          >
-            <span className="text-xs font-bold">JSON</span>
-          </button>
-          <button
-            onClick={handleExportPNG}
-            className="p-1 hover:bg-slate-200 rounded text-slate-500 transition-colors"
-            title="Export PNG"
-          >
-            <Download size={20} />
-          </button>
           <button
             onClick={handleClear}
             className="p-1 hover:bg-red-100 hover:text-red-600 rounded text-slate-500 transition-colors"

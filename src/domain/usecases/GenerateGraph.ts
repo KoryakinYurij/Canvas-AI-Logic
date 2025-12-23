@@ -1,14 +1,14 @@
-import { AIConnector } from '../ports/AIConnector';
-import { useGraphStore } from '../graph/useGraphStore';
+import { AIConnector, GraphAction } from '../ports/AIConnector';
 
 export class GenerateGraphUseCase {
   constructor(private aiConnector: AIConnector) {}
 
-  async execute(prompt: string): Promise<void> {
+  async execute(prompt: string): Promise<GraphAction[]> {
     try {
-      const graph = await this.aiConnector.generateGraph(prompt);
-      // Directly updating the store via its action
-      useGraphStore.getState().setGraph(graph);
+      const actions = await this.aiConnector.generateGraph(prompt);
+      // SIMPLIFICATION: We no longer auto-apply actions to the store.
+      // The caller handles the proposal.
+      return actions;
     } catch (error) {
       console.error('Failed to generate graph:', error);
       throw error;
