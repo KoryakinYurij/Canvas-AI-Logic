@@ -3,11 +3,13 @@ import { Button } from '../atoms/Button';
 import { TextArea } from '../atoms/Input';
 import { generateGraphUseCase } from '../../di';
 import { useToastStore } from '@presentation/stores/useToastStore';
+import { useProposalStore } from '@presentation/stores/useProposalStore';
 
 export const PromptInput: React.FC = () => {
   const [prompt, setPrompt] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { addToast } = useToastStore();
+  const { addProposals } = useProposalStore();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -16,8 +18,14 @@ export const PromptInput: React.FC = () => {
     setIsLoading(true);
     try {
       const actions = await generateGraphUseCase.execute(prompt);
-      console.log('Proposed actions:', actions);
-      addToast(`Received ${actions.length} proposed actions. Approval UI coming soon.`, 'success');
+
+      if (actions.length > 0) {
+        addProposals(actions);
+        addToast(`${actions.length} actions proposed. Please review them.`, 'success');
+      } else {
+        addToast('AI could not generate any actions from that prompt.', 'error');
+      }
+
     } catch (error) {
       console.error(error);
       addToast(error instanceof Error ? error.message : 'Failed to generate graph', 'error');

@@ -3,6 +3,7 @@ import { PromptInput } from '@presentation/organisms/PromptInput';
 import { ChatSidebar } from '@presentation/organisms/ChatSidebar';
 import { CanvasWidget } from '@widget/canvas/CanvasWidget';
 import { ToastContainer } from '@presentation/atoms/Toast';
+import { ProposalReview } from '@presentation/organisms/ProposalReview';
 
 function App() {
   const { nodes } = useGraphStore();
@@ -20,6 +21,7 @@ function App() {
           <PromptInput />
         </div>
       )}
+      <ProposalReview />
       <ToastContainer />
     </div>
   )
