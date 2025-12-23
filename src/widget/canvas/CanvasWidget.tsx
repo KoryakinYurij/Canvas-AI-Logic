@@ -63,13 +63,12 @@ export const CanvasWidget: React.FC = () => {
       onWheel={handleWheel}
     >
       <div
-        id="canvas-export-root"
         className="absolute origin-top-left transition-transform duration-75 ease-linear"
         style={{
           transform: `translate(${transform.x}px, ${transform.y}px) scale(${transform.scale})`
         }}
       >
-        <svg className="absolute top-0 left-0 w-[5000px] h-[5000px] pointer-events-none overflow-visible">
+        <svg className="absolute top-0 left-0 w-full h-full pointer-events-none overflow-visible">
            {Object.values(edges).map(edge => (
              <ConnectionLine
                key={edge.id}

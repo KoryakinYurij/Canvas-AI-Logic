@@ -15,9 +15,8 @@ export class RefineGraphUseCase {
 
       const response = await this.aiConnector.refineGraph(graphModel, command);
 
-      if (response.type === 'graph') {
-        useGraphStore.getState().setGraph(response.content);
-      }
+      // SIMPLIFICATION: We no longer auto-apply changes.
+      // The response is returned to the UI as a proposal.
 
       return response;
     } catch (error) {
