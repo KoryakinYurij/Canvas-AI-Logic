@@ -3,11 +3,13 @@ import { Button } from '../atoms/Button';
 import { TextArea } from '../atoms/Input';
 import { generateGraphUseCase } from '../../di';
 import { useToastStore } from '@presentation/stores/useToastStore';
+import { useProposalStore } from '@presentation/stores/useProposalStore';
 
 export const PromptInput: React.FC = () => {
   const [prompt, setPrompt] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { addToast } = useToastStore();
+  const { addProposals } = useProposalStore();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
