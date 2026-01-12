@@ -4,7 +4,6 @@ import { clsx } from 'clsx';
 import { refineGraphUseCase } from '../../di';
 import { useGraphStore } from '@domain/graph/useGraphStore';
 import { Trash2 } from 'lucide-react';
-import { useProposalStore } from '@presentation/stores/useProposalStore';
 
 interface Message {
   id: string;
@@ -21,7 +20,6 @@ export const ChatSidebar = () => {
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { clearGraph } = useGraphStore();
-  const { addProposals } = useProposalStore();
 
   const handleClear = () => {
     if (confirm('Are you sure you want to clear the canvas? This cannot be undone.')) {
@@ -62,7 +60,6 @@ export const ChatSidebar = () => {
         content = response.content;
       } else if (response.type === 'proposal') {
         content = response.message + ` (${response.content.length} actions proposed)`;
-        addProposals(response.content);
       }
 
       const aiMessage: Message = {

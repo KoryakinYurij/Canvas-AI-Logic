@@ -43,7 +43,7 @@ export class MockAIConnector implements AIConnector {
     ];
   }
 
-  async refineGraph(_currentGraph: GraphModel, command: string): Promise<AIResponse> {
+  async refineGraph(currentGraph: GraphModel, command: string): Promise<AIResponse> {
     await new Promise((resolve) => setTimeout(resolve, 500));
 
     // Simple mock intent

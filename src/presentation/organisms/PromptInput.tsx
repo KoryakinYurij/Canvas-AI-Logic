@@ -18,14 +18,8 @@ export const PromptInput: React.FC = () => {
     setIsLoading(true);
     try {
       const actions = await generateGraphUseCase.execute(prompt);
-
-      if (actions.length > 0) {
-        addProposals(actions);
-        addToast(`${actions.length} actions proposed. Please review them.`, 'success');
-      } else {
-        addToast('AI could not generate any actions from that prompt.', 'error');
-      }
-
+      console.log('Proposed actions:', actions);
+      addToast(`Received ${actions.length} proposed actions. Approval UI coming soon.`, 'success');
     } catch (error) {
       console.error(error);
       addToast(error instanceof Error ? error.message : 'Failed to generate graph', 'error');
